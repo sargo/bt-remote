@@ -63,9 +63,11 @@ namespace bluetooth {
       btRemoteConnected = true;
       while (btRemoteConnected) {
         const uartData = bluetooth.uartReadUntil(serial.delimiters(Delimiters.Colon));
+        console.log(uartData);
         if (uartData) {
           const [buttonName, actionName] = uartData.split('-');
           if (buttonName && actionName) {
+            console.log(buttonName, actionName)
             btRemoteHandlers
               .filter((handler) => handler.button.toString() === buttonName && handler.action.toString() === actionName)
               .map((handler) => control.inBackground(handler.onEvent));
