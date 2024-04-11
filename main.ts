@@ -65,15 +65,10 @@ namespace bluetooth {
         const uartData = bluetooth.uartReadUntil(serial.delimiters(Delimiters.Colon));
         if (uartData) {
           const [button, action] = uartData.split('-');
-          if (
-            Object.values(BtButton).includes(button as any) &&
-            Object.values(BtButtonAction).includes(action as any)
-          ) {
+          if (button && action) {
             btRemoteHandlers
-              .filter((h) => h.button === button && h.action === action)
-              .map((h) => {
-                background.schedule(h.onEvent, background.Thread.UserCallback, background.Mode.Once, 0);
-              });
+              .filter((handler) => handler.button === button && handler.action === action)
+              .map((handler) => control.inBackground(handler));
           }
         }
       }
