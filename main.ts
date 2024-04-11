@@ -1,4 +1,4 @@
-const enum BtButton {
+enum BtButton {
   //% block="▲"
   n = 1,
   //% block="◀"
@@ -19,7 +19,7 @@ const enum BtButton {
   c = 9,
 }
 
-const enum BtButtonAction {
+enum BtButtonAction {
   //% block="pressed"
   d = 10,
   //% block="released"
@@ -68,7 +68,7 @@ namespace bluetooth {
           const [buttonName, actionName] = uartData.split('-');
           if (buttonName && actionName) {
             btRemoteHandlers
-              .filter((handler) => { serial.writeString(handler.button); return (handler.button.toString() === buttonName && handler.action.toString() === actionName) } )
+              .filter((handler) => { serial.writeString(handler.button.toString()); return (handler.button.toString() === buttonName && handler.action.toString() === actionName) } )
               .map((handler) => { serial.writeString('onEvent'); control.inBackground(handler.onEvent) });
           }
         }
