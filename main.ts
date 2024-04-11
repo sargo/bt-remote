@@ -1,77 +1,102 @@
-bluetooth.onBluetoothConnected(function () {
-    basic.showIcon(IconNames.Yes)
-    connected = 1
-    while (connected == 1) {
-        uartData = bluetooth.uartReadUntil(serial.delimiters(Delimiters.Colon))
-        control.raiseEvent(
-        EventBusSource.MES_DPAD_CONTROLLER_ID,
-        uartDataToEvent(uartData)
-        )
-    }
-})
-bluetooth.onBluetoothDisconnected(function () {
-    basic.showIcon(IconNames.No)
-    connected = 0
-})
-control.onEvent(EventBusSource.MES_DPAD_CONTROLLER_ID, EventBusValue.MES_DPAD_BUTTON_A_DOWN, function () {
-    basic.showString("A")
-})
-function uartDataToEvent (cmd: string) {
-    if (cmd.includes("a-u")) {
-        return EventBusValue.MES_DPAD_BUTTON_A_UP
-    } else if (cmd.includes("a-d")) {
-        return EventBusValue.MES_DPAD_BUTTON_A_DOWN
-    } else if (cmd.includes("b-u")) {
-        return EventBusValue.MES_DPAD_BUTTON_B_UP
-    } else if (cmd.includes("b-d")) {
-        return EventBusValue.MES_DPAD_BUTTON_B_DOWN
-    } else if (cmd.includes("c-u")) {
-        return EventBusValue.MICROBIT_BUTTON_EVT_UP
-    } else if (cmd.includes("c-d")) {
-        return EventBusValue.MICROBIT_BUTTON_EVT_DOWN
-    } else if (cmd.includes("x-u")) {
-        return EventBusValue.MES_DPAD_BUTTON_C_UP
-    } else if (cmd.includes("x-d")) {
-        return EventBusValue.MES_DPAD_BUTTON_C_DOWN
-    } else if (cmd.includes("y-u")) {
-        return EventBusValue.MES_DPAD_BUTTON_D_UP
-    } else if (cmd.includes("y-d")) {
-        return EventBusValue.MES_DPAD_BUTTON_D_DOWN
-    } else if (cmd.includes("n-u")) {
-        return EventBusValue.MES_DPAD_BUTTON_1_UP
-    } else if (cmd.includes("n-d")) {
-        return EventBusValue.MES_DPAD_BUTTON_1_DOWN
-    } else if (cmd.includes("e-u")) {
-        return EventBusValue.MES_DPAD_BUTTON_2_UP
-    } else if (cmd.includes("e-d")) {
-        return EventBusValue.MES_DPAD_BUTTON_2_DOWN
-    } else if (cmd.includes("s-u")) {
-        return EventBusValue.MES_DPAD_BUTTON_3_UP
-    } else if (cmd.includes("s-d")) {
-        return EventBusValue.MES_DPAD_BUTTON_3_DOWN
-    } else if (cmd.includes("w-u")) {
-        return EventBusValue.MES_DPAD_BUTTON_4_UP
-    } else if (cmd.includes("w-d")) {
-        return EventBusValue.MES_DPAD_BUTTON_4_DOWN
-    }
-    return EventBusValue.MES_DEVICE_INCOMING_CALL
+enum BtButton {
+  //% block="▲"
+  North = 'n',
+  //% block="◀"
+  West = 'w',
+  //% block="▶"
+  East = 'e',
+  //% block="▼"
+  South = 's',
+  //% block="A"
+  Button_A = 'a',
+  //% block="B"
+  Button_B = 'b',
+  //% block="X"
+  Button_X = 'x',
+  //% block="Y"
+  Button_Y = 'y',
+  //% block="C"
+  Button_C = 'c',
 }
-control.onEvent(EventBusSource.MES_DPAD_CONTROLLER_ID, EventBusValue.MES_DPAD_BUTTON_A_UP, function () {
-    basic.showLeds(`
-        . . . . .
-        . . . . .
-        . . . . .
-        . . . . .
-        . . . . .
-        `)
-})
-function btInit () {
-    event = EventBusValue.MES_DEVICE_INCOMING_CALL
-    bluetooth.startUartService()
-    bluetooth.startTemperatureService()
+
+enum BtButtonAction {
+  //% block="pressed"
+  Pressed = 'd',
+  //% block="released"
+  Released = 'u',
 }
-let event = 0
-let uartData = ""
-let connected = 0
-btInit()
-basic.showIcon(IconNames.Heart)
+
+//% color=#0fbc11 icon="\u272a" block="MakerBit"
+//% category="Bluetooth"
+namespace bluetooth {
+  class BtButtonHandler {
+    button: BtButton;
+    action: BtButtonAction;
+    onEvent: () => void;
+
+    constructor(button: BtButton, action: BtButtonAction, onEvent: () => void) {
+      this.button = button;
+      this.action = action;
+      this.onEvent = onEvent;
+    }
+  }
+
+  const btRemoteHandlers: BtButtonHandler[] = [];
+  let btRemoteConnected: boolean = false;
+
+  /**
+   * Connects to the BT remote.
+   */
+  //% subcategory="BT Remote"
+  //% blockId="bt_remote_connect_bt_remote"
+  //% block="connect BT Remote"
+  //% pin.fieldEditor="gridpicker"
+  //% pin.fieldOptions.columns=4
+  //% pin.fieldOptions.tooltips="false"
+  //% weight=90
+  export function connectBtRemote(): void {
+    bluetooth.startUartService();
+    // FIXME - UART service do not start when it's alone, we have to start at least one other service
+    bluetooth.startTemperatureService();
+
+    bluetooth.onBluetoothConnected(function () {
+      btRemoteConnected = true;
+      while (btRemoteConnected) {
+        const uartData = bluetooth.uartReadUntil(serial.delimiters(Delimiters.Colon));
+        if (uartData) {
+          const [button, action] = uartData.split('-');
+          if (
+            Object.values(BtButton).includes(button as any) &&
+            Object.values(BtButtonAction).includes(action as any)
+          ) {
+            btRemoteHandlers
+              .filter((h) => h.button === button && h.action === action)
+              .map((h) => {
+                background.schedule(h.onEvent, background.Thread.UserCallback, background.Mode.Once, 0);
+              });
+          }
+        }
+      }
+    });
+    bluetooth.onBluetoothDisconnected(function () {
+      btRemoteConnected = false;
+    });
+  }
+
+  /**
+   * Do something when a specific button is pressed or released on the remote control.
+   * @param button the button to be checked
+   * @param action the trigger action
+   * @param handler body code to run when the event is raised
+   */
+  //% subcategory="BT Remote"
+  //% blockId=br_remote_on_bt_button
+  //% block="on BT button | %button | %action"
+  //% button.fieldEditor="gridpicker"
+  //% button.fieldOptions.columns=3
+  //% button.fieldOptions.tooltips="false"
+  //% weight=50
+  export function onBtButton(button: BtButton, action: BtButtonAction, handler: () => void) {
+    btRemoteHandlers.push(new BtButtonHandler(button, action, handler));
+  }
+}
