@@ -63,14 +63,14 @@ namespace bluetooth {
       btRemoteConnected = true;
       while (btRemoteConnected) {
         const uartData = bluetooth.uartReadUntil(serial.delimiters(Delimiters.Colon));
-        serial.writeString(uartData);
+        serial.writeLine(uartData);
         if (uartData) {
           const [buttonName, actionName] = uartData.split('-');
           if (buttonName && actionName) {
-            serial.writeString(buttonName)
-            serial.writeString(actionName)
+            serial.writeLine(buttonName)
+            serial.writeLine(actionName)
             btRemoteHandlers
-              .filter((handler) => handler.button.toString() === buttonName && handler.action.toString() === actionName)
+              .filter((handler) => { serial.writeString(handler.button.toString()); return (handler.button.toString() === buttonName && handler.action.toString() === actionName) } )
               .map((handler) => { serial.writeString('onEvent'); control.inBackground(handler.onEvent) });
           }
         }
