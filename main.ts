@@ -2,30 +2,30 @@ const BtButtonValues = ['n', 'w', 'e', 's', 'a', 'b', 'x', 'y', 'c', 'u', 'd'];
 
 enum BtButton {
   //% block="▲"
-  n = BtButtonValues.indexOf('n'),
+  n = 0,
   //% block="◀"
-  w = BtButtonValues.indexOf('w'),
+  w = 1,
   //% block="▶"
-  e = BtButtonValues.indexOf('e'),
+  e = 2,
   //% block="▼"
-  s = BtButtonValues.indexOf('s'),
+  s = 3,
   //% block="A"
-  a = BtButtonValues.indexOf('a'),
+  a = 4,
   //% block="B"
-  b = BtButtonValues.indexOf('b'),
+  b = 5,
   //% block="X"
-  x = BtButtonValues.indexOf('x'),
+  x = 6,
   //% block="Y"
-  y = BtButtonValues.indexOf('y'),
+  y = 7,
   //% block="C"
-  c = BtButtonValues.indexOf('c'),
+  c = 8,
 }
 
 enum BtButtonAction {
   //% block="pressed"
-  d = BtButtonValues.indexOf('d'),
+  d = 9,
   //% block="released"
-  u = BtButtonValues.indexOf('u'),
+  u = 10,
 }
 
 //% color=#0fbc11 icon="\u272a" block="BT Remote"
