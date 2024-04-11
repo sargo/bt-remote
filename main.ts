@@ -1,4 +1,4 @@
-const BtButtonValues = ['n', 'w', 'e', 's', 'a', 'b', 'x', 'y', 'c', 'u', 'd'];
+const BtButtonValues = ['n', 'w', 'e', 's', 'a', 'b', 'x', 'y', 'c', 'd', 'a'];
 
 enum BtButton {
   //% block="▲"
@@ -76,7 +76,6 @@ namespace bluetooth {
                   handler.action.toString() === `${BtButtonValues.indexOf(actionName)}`
               )
               .map((handler) => {
-                serial.writeLine('onEvent');
                 control.inBackground(handler.onEvent);
               });
           }
