@@ -1,5 +1,5 @@
 {
-    "name": "bt-remote",
+    "name": "diy-bt-remote",
     "description": "",
     "dependencies": {
         "core": "*",
