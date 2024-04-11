@@ -2,30 +2,30 @@ const BtButtonValues = ['n', 'w', 'e', 's', 'a', 'b', 'x', 'y', 'c', 'd', 'a'];
 
 enum BtButton {
   //% block="▲"
-  n = 0,
+  North = 0,
   //% block="◀"
-  w = 1,
+  West = 1,
   //% block="▶"
-  e = 2,
+  East = 2,
   //% block="▼"
-  s = 3,
+  South = 3,
   //% block="A"
-  a = 4,
+  A = 4,
   //% block="B"
-  b = 5,
+  B = 5,
   //% block="X"
-  x = 6,
+  X = 6,
   //% block="Y"
-  y = 7,
+  Y = 7,
   //% block="C"
-  c = 8,
+  C = 8,
 }
 
 enum BtButtonAction {
   //% block="pressed"
-  d = 9,
+  Pressed = 9,
   //% block="released"
-  u = 10,
+  Released = 10,
 }
 
 //% color=#0fbc11 icon="\u272a" block="BT Remote"
