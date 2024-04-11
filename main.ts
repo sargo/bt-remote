@@ -1,29 +1,29 @@
-enum BtButton {
+const enum BtButton {
   //% block="▲"
-  North = 'n',
+  n = 1,
   //% block="◀"
-  West = 'w',
+  w = 2,
   //% block="▶"
-  East = 'e',
+  e = 3,
   //% block="▼"
-  South = 's',
+  s = 4,
   //% block="A"
-  Button_A = 'a',
+  a = 5,
   //% block="B"
-  Button_B = 'b',
+  b = 6,
   //% block="X"
-  Button_X = 'x',
+  x = 7,
   //% block="Y"
-  Button_Y = 'y',
+  y = 8,
   //% block="C"
-  Button_C = 'c',
+  c = 9,
 }
 
-enum BtButtonAction {
+const enum BtButtonAction {
   //% block="pressed"
-  Pressed = 'd',
+  d = 10,
   //% block="released"
-  Released = 'u',
+  u = 11,
 }
 
 //% color=#0fbc11 icon="\u272a" block="MakerBit"
@@ -64,10 +64,10 @@ namespace bluetooth {
       while (btRemoteConnected) {
         const uartData = bluetooth.uartReadUntil(serial.delimiters(Delimiters.Colon));
         if (uartData) {
-          const [button, action] = uartData.split('-');
-          if (button && action) {
+          const [buttonName, actionName] = uartData.split('-');
+          if (BtButton[buttonName] && BtButtonAction[actionName]) {
             btRemoteHandlers
-              .filter((handler) => handler.button === button && handler.action === action)
+              .filter((handler) => handler.button === BtButton[buttonName] && handler.action === BtButtonAction[actionName])
               .map((handler) => control.inBackground(handler.onEvent));
           }
         }
