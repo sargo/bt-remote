@@ -1,29 +1,31 @@
+const BtButtonValues = ['n', 'w', 'e', 's', 'a', 'b', 'x', 'y', 'c', 'u', 'd']
+
 enum BtButton {
   //% block="▲"
-  n = 1,
+  n = BtButtonValues.indexOf('n'),
   //% block="◀"
-  w = 2,
+  w = BtButtonValues.indexOf('w'),
   //% block="▶"
-  e = 3,
+  e = BtButtonValues.indexOf('e'),
   //% block="▼"
-  s = 4,
+  s = BtButtonValues.indexOf('s'),
   //% block="A"
-  a = 5,
+  a = BtButtonValues.indexOf('a'),
   //% block="B"
-  b = 6,
+  b = BtButtonValues.indexOf('b'),
   //% block="X"
-  x = 7,
+  x = BtButtonValues.indexOf('x'),
   //% block="Y"
-  y = 8,
+  y = BtButtonValues.indexOf('y'),
   //% block="C"
-  c = 9,
+  c = BtButtonValues.indexOf('c'),
 }
 
 enum BtButtonAction {
   //% block="pressed"
-  d = 10,
+  d = BtButtonValues.indexOf('d'),
   //% block="released"
-  u = 11,
+  u = BtButtonValues.indexOf('u'),
 }
 
 //% color=#0fbc11 icon="\u272a" block="BT Remote"
@@ -68,7 +70,7 @@ namespace bluetooth {
           const [buttonName, actionName] = uartData.split('-');
           if (buttonName && actionName) {
             btRemoteHandlers
-              .filter((handler) => { serial.writeLine(`${handler.button.toString()} === ${buttonName} && ${handler.action.toString()} === ${actionName} !!! ${handler.button.toString() === buttonName && handler.action.toString() === actionName}`); return (handler.button.toString() === buttonName && handler.action.toString() === actionName) } )
+              .filter((handler) => handler.button.toString() === `${BtButtonValues.indexOf(buttonName)}` && handler.action.toString() === `${BtButtonValues.indexOf(actionName) )
               .map((handler) => { serial.writeLine('onEvent'); control.inBackground(handler.onEvent) });
           }
         }
