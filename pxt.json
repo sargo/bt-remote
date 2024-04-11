@@ -1,6 +1,6 @@
 {
     "name": "diy-bt-remote",
-    "description": "",
+    "description": "Connect DIY Bluetooth remote based on ESP32 and ESPHome to a micro:bit",
     "dependencies": {
         "core": "*",
         "bluetooth": "*"
