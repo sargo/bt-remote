@@ -4,7 +4,6 @@
     "dependencies": {
         "core": "*",
         "microphone": "*",
-        "pxt-esp8266_thingspeak": "github:alankrantas/pxt-esp8266_thingspeak#v0.0.3",
         "bluetooth": "*"
     },
     "files": [
