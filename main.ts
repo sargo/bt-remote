@@ -68,7 +68,7 @@ namespace bluetooth {
           if (button && action) {
             btRemoteHandlers
               .filter((handler) => handler.button === button && handler.action === action)
-              .map((handler) => control.inBackground(handler));
+              .map((handler) => control.inBackground(handler.onEvent));
           }
         }
       }
