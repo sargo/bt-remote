@@ -26,7 +26,7 @@ enum BtButtonAction {
   u = 11,
 }
 
-//% color=#0fbc11 icon="\u272a" block="MakerBit"
+//% color=#0fbc11 icon="\u272a" block="BT Remote"
 //% category="Bluetooth"
 namespace bluetooth {
   class BtButtonHandler {
@@ -68,8 +68,8 @@ namespace bluetooth {
           const [buttonName, actionName] = uartData.split('-');
           if (buttonName && actionName) {
             btRemoteHandlers
-              .filter((handler) => { serial.writeString(BtButton[handler.button]); return (BtButton[handler.button] === buttonName && BtButtonAction[handler.action] === actionName) } )
-              .map((handler) => { serial.writeString('onEvent'); control.inBackground(handler.onEvent) });
+              .filter((handler) => { serial.writeLine(handler.button.toString()); serial.writeLine(handler.action.toString()); return (handler.button.toString() === buttonName && handler.action.toString() === actionName) } )
+              .map((handler) => { serial.writeLine('onEvent'); control.inBackground(handler.onEvent) });
           }
         }
       }
